@@ -149,9 +149,12 @@ export default function Home() {
             <Button className="w-full" onClick={handleGenerate}>Generate Result</Button>
 
             {/* Download Buttons */}
-            <DownloadPDF content={aiResult || taskInput} />
-            <DownloadExcel content={aiResult || taskInput} />
-            <DownloadImage elementId="result-content" />
+            <div className="flex flex-wrap gap-3 mt-4">
+              <DownloadPDF content={aiResult || taskInput} />
+              <DownloadExcel content={aiResult || taskInput} />
+              <DownloadImage elementId="result-content" />
+              <DownloadInfographic content={aiResult || taskInput} layout={layout} />
+            </div>
           </CardContent>
         </Card>
       </div>
