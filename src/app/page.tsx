@@ -5,9 +5,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import DownloadPDF from "../components/DownloadPDF";
-import DownloadExcel from "../components/DownloadExcel";
-import DownloadImage from "../components/DownloadImage";
+import DownloadPDF from "../components/ui/DownloadPDF";
+import DownloadExcel from "../components/ui/DownloadExcel";
+import DownloadImage from "../components/ui/DownloadImage";
+import DownloadInfographic from "../components/ui/DownloadInfographic";
 
 export default function Home() {
   const [role, setRole] = useState("");
