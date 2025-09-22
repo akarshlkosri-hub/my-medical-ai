@@ -5,6 +5,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import DownloadPDF from "../components/DownloadPDF";
+import DownloadExcel from "../components/DownloadExcel";
+import DownloadImage from "../components/DownloadImage";
 
 export default function Home() {
   const [role, setRole] = useState("");
@@ -12,6 +15,23 @@ export default function Home() {
   const [taskType, setTaskType] = useState("");
   const [taskInput, setTaskInput] = useState("");
   const [layout, setLayout] = useState("");
+  const [aiResult, setAiResult] = useState("");
+
+  const handleGenerate = async () => {
+    if (!taskInput) return alert("Please enter a task!");
+    try {
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: taskInput }),
+      });
+      const data = await res.json();
+      setAiResult(data.result);
+    } catch (err) {
+      console.error(err);
+      alert("Error generating response");
+    }
+  };
 
   return (
     <main className="min-h-screen p-6 bg-gray-50">
@@ -35,7 +55,7 @@ export default function Home() {
           </CardContent>
         </Card>
 
-        {/* If AI Assistant is selected */}
+        {/* SubRole */}
         {role === "assistant" && (
           <Card>
             <CardContent className="space-y-4 p-4">
@@ -50,7 +70,6 @@ export default function Home() {
                   <SelectItem value="neurology">Neurology</SelectItem>
                   <SelectItem value="oncology">Oncology</SelectItem>
                   <SelectItem value="orthopedics">Orthopedics</SelectItem>
-                  {/* Tum apne baki 41 subjects yahan add kar sakte ho */}
                 </SelectContent>
               </Select>
             </CardContent>
@@ -88,7 +107,7 @@ export default function Home() {
           </Card>
         )}
 
-        {/* Infographic Layout Selection */}
+        {/* Infographic Layout */}
         {taskType === "infographics" && (
           <Card>
             <CardContent className="space-y-4 p-4">
@@ -116,37 +135,22 @@ export default function Home() {
         {/* Preview Section */}
         <Card>
           <CardContent className="space-y-4 p-4">
-            <h2 className="font-semibold">Preview</h2>
-            <div className="p-4 border rounded bg-white">
+            <h2 className="font-semibold">Preview / AI Result</h2>
+            <div id="result-content" className="p-4 border rounded bg-white">
               <p><strong>Role:</strong> {role}</p>
               {subRole && <p><strong>Specialization:</strong> {subRole}</p>}
               <p><strong>Task Type:</strong> {taskType}</p>
               {taskInput && <p><strong>Task Input:</strong> {taskInput}</p>}
               {layout && <p><strong>Layout:</strong> {layout}</p>}
+              {aiResult && <p><strong>AI Result:</strong> {aiResult}</p>}
             </div>
-            <Button
-  className="w-full"
-  onClick={async () => {
-    if (!taskInput) return alert("Please enter a task!");
 
-    try {
-      const res = await fetch("/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: taskInput }),
-      });
+            <Button className="w-full" onClick={handleGenerate}>Generate Result</Button>
 
-      const data = await res.json();
-      alert(data.result); // ya preview box me dikha do
-    } catch (err) {
-      console.error(err);
-      alert("Error generating response");
-    }
-  }}
->
-  Generate Result
-</Button>
-
+            {/* Download Buttons */}
+            <DownloadPDF content={aiResult || taskInput} />
+            <DownloadExcel content={aiResult || taskInput} />
+            <DownloadImage elementId="result-content" />
           </CardContent>
         </Card>
       </div>

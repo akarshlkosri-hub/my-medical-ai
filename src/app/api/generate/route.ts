@@ -1,8 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
-import { generateAIResponse } from "@/lib/openai";
+import { NextResponse } from "next/server";
+import OpenAI from "openai";
 
-export async function POST(req: NextRequest) {
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+export async function POST(req: Request) {
   const { prompt } = await req.json();
-  const result = await generateAIResponse(prompt);
-  return NextResponse.json({ result });
+  const response = await client.chat.completions.create({
+    model: "gpt-4",
+    messages: [{ role: "user", content: prompt }],
+  });
+  return NextResponse.json({ result: response.choices[0].message?.content });
 }
